@@ -3,7 +3,9 @@ import { products } from '../data/products.js';
 
 let productsHTML = '';
 
+//looping through products
 products.forEach(product => {
+    // adding each product to the productsHTML string
     productsHTML += `
         <div class="product-container">
             <div class="product-image-container">
@@ -57,44 +59,60 @@ products.forEach(product => {
     `;
 });
 
-
+// inserting the productsHTML string into the products grid
 document.querySelector('.js-products-grid').innerHTML = productsHTML;
+
+
+function addToCart(productId, quantity) {
+    let matchingItem;
+
+    // check if the product is already in the cart
+    cart.forEach((item) => {
+        if (productId === item.productId) {
+            // if it is, let the item be the matchingItem
+            matchingItem = item;
+        }
+    });
+
+    // if the product is already in the cart, update the quantity
+    // if it is not, add it to the cart
+    if (matchingItem) {
+        matchingItem.quantity++;
+    } else {
+        cart.push({
+            productId: productId,
+            quantity: quantity
+        })
+    }
+}
 
 document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
+        // get the product id from the button
         const productId = button.dataset.productId;
 
+        // get the number of quantity from the selector button
         const quantitySelector = document.querySelector(`.js-button-quantity[data-product-id="${productId}"]`);
         const quantity = parseInt(quantitySelector.value, 10);
-        
-        let matchingItem;
 
+        addToCart(productId, quantity);
+
+        // update quantity of the product in cart
+        let cartQuantity = 0;
         cart.forEach((item) => {
-            if (productId === item.productId) {
-                matchingItem = item;
-            }
+            cartQuantity += item.quantity;
         });
 
-        if (matchingItem) {
-            matchingItem.quantity++;
-        } else {
-            cart.push({
-                productId: productId,
-                quantity: quantity
-            })
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-
-        let cartQuantity = cart.reduce((total, item) => total + item.quantity, 0);
-
+        // update the cart quantity in the header
         document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 
+        // show the added to cart message
         setTimeout(() => {
             const addedToCartElement = document.querySelector(`.added-to-cart[data-product-id="${productId}"]`);
             if (addedToCartElement) {
                 addedToCartElement.style.opacity = '1';
 
+                // hide the added to cart message after 2 seconds
                 setTimeout(() => {
                     addedToCartElement.style.opacity = '0';
                 }, 2000);
