@@ -1,3 +1,6 @@
+import { cart } from '../data/cart.js';
+
+
 let productsHTML = '';
 
 products.forEach(product => {
@@ -25,7 +28,7 @@ products.forEach(product => {
             </div>
 
             <div class="product-quantity-container">
-                <select>
+                <select class='js-button-quantity' data-product-id=${product.id}>
                 <option selected value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -41,7 +44,7 @@ products.forEach(product => {
 
             <div class="product-spacer"></div>
 
-            <div class="added-to-cart">
+            <div class="added-to-cart js-added-to-cart" data-product-id="${product.id}">
                 <img src="images/icons/checkmark.png">
                 Added
             </div>
@@ -61,6 +64,9 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     button.addEventListener('click', () => {
         const productId = button.dataset.productId;
 
+        const quantitySelector = document.querySelector(`.js-button-quantity[data-product-id="${productId}"]`);
+        const quantity = parseInt(quantitySelector.value, 10);
+        
         let matchingItem;
 
         cart.forEach((item) => {
@@ -74,17 +80,25 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
         } else {
             cart.push({
                 productId: productId,
-                quantity: 1
-            });
+                quantity: quantity
+            })
         }
 
-        let cartQuantity = 0;
+        localStorage.setItem('cart', JSON.stringify(cart));
 
-        cart.forEach((item) => {
-            cartQuantity += item.quantity
-        });
+        let cartQuantity = cart.reduce((total, item) => total + item.quantity, 0);
 
         document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 
+        setTimeout(() => {
+            const addedToCartElement = document.querySelector(`.added-to-cart[data-product-id="${productId}"]`);
+            if (addedToCartElement) {
+                addedToCartElement.style.opacity = '1';
+
+                setTimeout(() => {
+                    addedToCartElement.style.opacity = '0';
+                }, 2000);
+            }
+        }, 0);
     });
 });
