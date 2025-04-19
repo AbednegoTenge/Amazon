@@ -53,3 +53,22 @@ export function removeFromCart(productId) {
 
     saveToStorage();
 }
+
+export function calculateCartQuantity(selector) {
+    // update quantity of the product in cart
+    let cartQuantity = 0;
+    cart.forEach((cartItem) => {
+        cartQuantity += cartItem.quantity;
+    });
+
+    // update the cart quantity in the header
+    if (selector === '.js-checkout-quantity') {
+        document.querySelector(selector).innerHTML = `${cartQuantity} items`;
+    } else if (selector === '.js-cart-quantity') {
+        document.querySelector(selector).innerHTML = cartQuantity;
+    }
+
+}
+
+function updateCartQuantity() {
+}
