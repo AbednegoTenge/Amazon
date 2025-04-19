@@ -1,22 +1,27 @@
+// Importing the cart data, removeFromCart function, products data, and formatCurrency utility
 import { cart, removeFromCart } from '../data/cart.js';
 import { products } from '../data/products.js';
 import { formatCurrency } from './utils/money.js';
 
-
+// Initialize an empty string to hold the HTML for the cart summary
 let cartSummaryHTML = '';
+
+// Loop through each item in the cart
 cart.forEach((cartItem) => {
-    const productId = cartItem.productId;
- 
+    const productId = cartItem.productId; // Get the product ID from the cart item
+
     let matchingProduct;
 
+    // Find the product in the products array that matches the product ID
     products.forEach((product) => {
         if (product.id === productId) {
-            matchingProduct = product;
+            matchingProduct = product; // Assign the matching product
         }
     });
 
+    // Generate the HTML for the cart item and append it to cartSummaryHTML
     cartSummaryHTML += `
-    <div class="cart-item-container">
+    <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
@@ -94,11 +99,17 @@ cart.forEach((cartItem) => {
     `;
 });
 
+// Insert the generated cart summary HTML into the order summary container
 document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
 
+// Add event listeners to all delete links
 document.querySelectorAll('.js-delete-link').forEach((link) => {
     link.addEventListener('click', () => {
-        const productId = link.dataset.productId;
-        removeFromCart(productId);
+        const productId = link.dataset.productId; // Get the product ID from the delete link
+        removeFromCart(productId); // Remove the item from the cart
+
+        // Find the container for the cart item and remove it from the DOM
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        container.remove();
     });
 });
