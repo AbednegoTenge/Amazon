@@ -72,5 +72,18 @@ export function calculateCartQuantity(selector) {
 
 }
 
-function updateCartQuantity() {
+export function updateDeliveryOption(productId, deliveryOptionId) {
+    let matchingItem;
+
+    // check if the product is already in the cart
+    cart.forEach((cartItem) => {
+        if (productId === cartItem.productId) {
+            // if it is, let the item be the matchingItem
+            matchingItem = cartItem;
+        }
+    });
+
+    matchingItem.deliveryOptionId = deliveryOptionId;
+
+    saveToStorage();
 }
